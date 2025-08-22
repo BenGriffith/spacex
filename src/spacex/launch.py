@@ -2,11 +2,12 @@ import json
 from collections import defaultdict
 
 import requests
+from constants import BUCKET, PROJECT_ID
 from google.cloud import storage
 
 
 def write_blob(data, bucket_name, destination_blob_name):
-    client = storage.Client()
+    client = storage.Client(project=PROJECT_ID)
 
     bucket = client.bucket(bucket_name)
     blob = bucket.blob(destination_blob_name)
@@ -21,7 +22,7 @@ def get_launches(launches_api, latest=None):
         launches_api = f"{launches_api}/latest"
 
     launches_response = requests.get(launches_api)
-    write_blob(launches_response, "spacex-data", "raw/launches.json")
+    write_blob(launches_response.json(), BUCKET, "raw/launches.json")
 
     launches = defaultdict(dict)
     for launch in launches_response.json():
@@ -40,4 +41,4 @@ def get_launches(launches_api, latest=None):
             "image": launch["links"]["patch"]["small"],
             "webcast": launch["links"]["webcast"],
         }
-    write_blob(launches, "spacex-data", "clean/launches.json")
+    write_blob(launches, BUCKET, "clean/launches.json")
