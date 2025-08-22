@@ -1,5 +1,3 @@
-from launch import get_launches
+from launch import get_spacex_data
 
-launches_api = "https://api.spacexdata.com/v5/launches"
-
-get_launches(launches_api)
+get_spacex_data()
